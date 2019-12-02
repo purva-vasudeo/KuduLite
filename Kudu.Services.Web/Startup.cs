@@ -42,6 +42,8 @@ using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Environment = Kudu.Core.Environment;
 using ILogger = Kudu.Core.Deployment.ILogger;
+using Microsoft.AspNetCore.Authentication;
+using Kudu.Services.Web.Services;
 
 namespace Kudu.Services.Web
 {
@@ -118,6 +120,10 @@ namespace Kudu.Services.Web
                         .AddFilter("System", LogLevel.Warning)
                         .AddConsole();
                 });
+
+            // configure basic authentication 
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
             services.AddSingleton<IHttpContextAccessor>(new HttpContextAccessor());
             services.AddSingleton<ILinuxConsumptionEnvironment, LinuxConsumptionEnvironment>();
