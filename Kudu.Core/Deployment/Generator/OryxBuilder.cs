@@ -5,6 +5,7 @@ using Kudu.Core.Infrastructure;
 using Kudu.Core.Helpers;
 using Kudu.Contracts.Settings;
 using Kudu.Core.Deployment.Oryx;
+using YamlDotNet.RepresentationModel;
 
 namespace Kudu.Core.Deployment.Generator
 {
@@ -78,8 +79,40 @@ namespace Kudu.Core.Deployment.Generator
                     SetupAppServiceArtifacts(context);
                 }
             }
+
+            if(args.Language == Framework.Python)
+            {
+                YamlMappingNode metadataProp = new YamlMappingNode();
+                YamlMappingNode buildProps = new YamlMappingNode();
+                YamlMappingNode sshStartupProps = new YamlMappingNode();
+
+                buildProps.Add("buildFlags", "DeploymentV2");
+                metadataProp.Add("metadata", buildProps);
+                metadataProp.Add("buildTimestamp", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
+                metadataProp.Add("builderKind", "OryxBuilder");
+                metadataProp.Add("runtimeKind", "need to modify this to something");
+                metadataProp.Add("appDirectory", $"/home/site/deployments/{context.CommitId}");
+                metadataProp.Add("buildDirectory", context.BuildTempPath);
+                metadataProp.Add("sshStartupCmd", Path.Combine(context.BuildTempPath, args.VirtualEnv, "bin", "activate"));
+                sshStartupProps.Add("PYTHON_PATH", Path.Combine(context.BuildTempPath, "bin", "python"));
+                metadataProp.Add("sshStartupEnvVars", sshStartupProps);
+
+
+                var stream = new YamlStream(new YamlDocument(metadataProp));
+
+                using (TextWriter writer = File.CreateText(System.Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot\appsvc-app-metadata.yml")))
+                {
+                    stream.Save(writer, assignAnchors: false);
+                }
+            }
+
             return Task.CompletedTask;
         }
+
+        /*public override void PostBuild(DeploymentContext context)
+        {
+
+        }*/
 
         private static void PreOryxBuild(DeploymentContext context)
         {
