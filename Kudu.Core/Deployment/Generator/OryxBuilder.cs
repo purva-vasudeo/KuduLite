@@ -104,7 +104,7 @@ namespace Kudu.Core.Deployment.Generator
 
                 Console.WriteLine($"OryxBuilder....writing to {System.Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot\appsvc - app - metadata.yml")}");
 
-                using (TextWriter writer = File.CreateText(System.Environment.ExpandEnvironmentVariables(@"\home\site\wwwroot\appsvc-app-metadata.yml")))
+                using (TextWriter writer = File.CreateText(@"/home/site/wwwroot/appsvc-app-metadata.yml"))
                 {
                     stream.Save(writer, assignAnchors: false);
                 }
