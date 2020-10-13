@@ -102,9 +102,9 @@ namespace Kudu.Core.Deployment.Generator
 
                 var stream = new YamlStream(new YamlDocument(metadataProp));
 
-                Console.WriteLine("OryxBuilder....writing to %HOME%\\site\\wwwroot\appsvc-app-metadata.yml");
+                Console.WriteLine($"OryxBuilder....writing to {System.Environment.ExpandEnvironmentVariables(@" % HOME %\site\wwwroot\appsvc - app - metadata.yml")}");
 
-                using (TextWriter writer = File.CreateText(System.Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot\appsvc-app-metadata.yml")))
+                using (TextWriter writer = File.CreateText(System.Environment.ExpandEnvironmentVariables(@"\home\site\wwwroot\appsvc-app-metadata.yml")))
                 {
                     stream.Save(writer, assignAnchors: false);
                 }
