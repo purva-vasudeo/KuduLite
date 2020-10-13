@@ -106,6 +106,14 @@ namespace Kudu.Core.Deployment.Generator
 
                 using (TextWriter writer = File.CreateText(@"/home/site/wwwroot/appsvc-app-metadata.yml"))
                 {
+                    if (File.Exists(@"/home/site/wwwroot/appsvc-app-metadata.yml"))
+                    {
+                        Console.WriteLine($"OryxBuilder....file created {@"/home/site/wwwroot/appsvc-app-metadata.yml"}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"OryxBuilder....file not created {@"/home/site/wwwroot/appsvc-app-metadata.yml"}");
+                    }
                     stream.Save(writer, assignAnchors: false);
                 }
             }
