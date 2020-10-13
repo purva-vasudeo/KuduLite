@@ -80,8 +80,10 @@ namespace Kudu.Core.Deployment.Generator
                 }
             }
 
+            Console.WriteLine("OryxBuilder....detecting if python app");
             if(args.Language == Framework.Python)
             {
+                Console.WriteLine("OryxBuilder....detected python app");
                 YamlMappingNode metadataProp = new YamlMappingNode();
                 YamlMappingNode buildProps = new YamlMappingNode();
                 YamlMappingNode sshStartupProps = new YamlMappingNode();
@@ -99,6 +101,8 @@ namespace Kudu.Core.Deployment.Generator
 
 
                 var stream = new YamlStream(new YamlDocument(metadataProp));
+
+                Console.WriteLine("OryxBuilder....writing to %HOME%\site\wwwroot\appsvc-app-metadata.yml");
 
                 using (TextWriter writer = File.CreateText(System.Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot\appsvc-app-metadata.yml")))
                 {
