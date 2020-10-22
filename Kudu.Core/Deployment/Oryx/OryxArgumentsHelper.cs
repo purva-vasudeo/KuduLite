@@ -33,7 +33,7 @@ namespace Kudu.Core.Deployment.Oryx
 
         internal static void AddPythonCompressOption(StringBuilder args, string format)
         {
-            args.AppendFormat(" -p compress_virtualenv={0}", format);
+            args.Append(" -p --compress-destination-dir");
         }
 
         internal static void AddPythonVirtualEnv(StringBuilder args, string virtualEnv)
