@@ -599,8 +599,26 @@ namespace Kudu.Core.Helpers
             string resContent = "";
             try
             {
-                using (var client = HttpClientFactory())
+                // Scope of var client is only till end of the using block
+                // The client will be disposed once we exit the using block and should not be used outside it
+                var client = HttpClientFactory();
+
+                if ("DEV".Equals(System.Environment.GetEnvironmentVariable("CURRENT_ENVIRONMENT"), StringComparison.OrdinalIgnoreCase))
                 {
+                    // The code inside the 'if' is only for private stamps or dev environments
+                    // We need to bypass self cert signing issues for calling hooks on FE
+
+                    var httpClientHandler = new HttpClientHandler();
+
+                    httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // DEBUGGING ONLY
+
+                    client = new HttpClient(httpClientHandler);
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                }
+
+                using (client)
+                {
+
                     if (ipAddress == null)
                     {
                         Trace(TraceEventType.Verbose, "Begin HttpPost {0}://{1}{2}, x-ms-request-id: {3}", scheme, hostOrAuthority, path, requestId);
