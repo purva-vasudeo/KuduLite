@@ -603,11 +603,12 @@ namespace Kudu.Core.Helpers
                 // The client will be disposed once we exit the using block and should not be used outside it
                 var client = HttpClientFactory();
 
+                Console.WriteLine("Before check for dev environment");
                 if ("DEV".Equals(System.Environment.GetEnvironmentVariable("CURRENT_ENVIRONMENT"), StringComparison.OrdinalIgnoreCase))
                 {
                     // The code inside the 'if' is only for private stamps or dev environments
                     // We need to bypass self cert signing issues for calling hooks on FE
-
+                    Console.WriteLine("Picking up dev environmnet...bypassing self cert rule");
                     var httpClientHandler = new HttpClientHandler();
 
                     httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // DEBUGGING ONLY
