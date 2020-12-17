@@ -84,7 +84,7 @@ namespace Kudu.Core.Deployment.Generator
         protected void RunCommand(DeploymentContext context, string command, bool ignoreManifest, string message = "Running deployment command...")
         {
             ILogger customLogger = context.Logger.Log(message);
-            customLogger.Log("Command: " + command);
+            customLogger.Log("Command Purva: " + command + $" {System.Environment.GetEnvironmentVariable("KUDU_BUILD_VERSION")}, {"0.0.1".Equals(System.Environment.GetEnvironmentVariable("KUDU_BUILD_VERSION"))}");
 
             // Creates an executable pointing to cmd and the working directory being
             // the repository root
