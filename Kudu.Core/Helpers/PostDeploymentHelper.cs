@@ -597,18 +597,28 @@ namespace Kudu.Core.Helpers
             var ipAddress = await GetAlternativeIPAddress(hostOrAuthority);
             var statusCode = default(HttpStatusCode);
             string resContent = "";
+
+            Console.WriteLine($" PostAsync New - Inside, checking ipaddress null - {ipAddress==null}");
             try
             {
-                using (var client = HttpClientFactory())
+
+                var httpClientHandler = new HttpClientHandler();
+
+                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // DEBUGGING ONLY
+
+                var httpClient = new HttpClient(httpClientHandler);
+                using (var client = httpClient) //Purva this should be var client = HttpClientFactory()
                 {
                     if (ipAddress == null)
                     {
                         Trace(TraceEventType.Verbose, "Begin HttpPost {0}://{1}{2}, x-ms-request-id: {3}", scheme, hostOrAuthority, path, requestId);
+                        Console.WriteLine($"Begin HttpPost with ipAddress==null {scheme}://{hostOrAuthority}{path}, x-ms-request-id: {requestId}");
                         client.BaseAddress = new Uri(string.Format("{0}://{1}", scheme, hostOrAuthority));
                     }
                     else
                     {
                         Trace(TraceEventType.Verbose, "Begin HttpPost {0}://{1}{2}, host: {3}, x-ms-request-id: {4}", scheme, ipAddress, path, hostOrAuthority, requestId);
+                        Console.WriteLine($"Begin HttpPost with ipAddress!=null {scheme}://{ipAddress}{path}, host: {hostOrAuthority}, x-ms-request-id: {requestId}");
                         client.BaseAddress = new Uri(string.Format("{0}://{1}", scheme, ipAddress));
                         client.DefaultRequestHeaders.Host = hostOrAuthority;
                     }
@@ -618,6 +628,9 @@ namespace Kudu.Core.Helpers
                     client.DefaultRequestHeaders.Add(Constants.RequestIdHeader, requestId);
 
                     var payload = new StringContent(content ?? string.Empty, Encoding.UTF8, "application/json");
+                    Console.WriteLine($" PostAsync - sending request {path}");
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     using (var response = await client.PostAsync(path, payload))
                     {
                         statusCode = response.StatusCode;
